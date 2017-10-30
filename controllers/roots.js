@@ -38,10 +38,11 @@ router.get('/', async function (req, res) {
     roots[i] = {};
     roots[i].name = root.screen_name;
     roots[i].tweets = root.tweets.length;
-    queries.push(User.find({belongs_to: root._id}))
+    queries.push(User.find({belongs_to: root._id}).sort({ count: 'desc' }).lean())
   });
   var allUsers = await Promise.all(queries);
   for (var i = 0; i < roots.length; i++) {
+    allUsers[i].map(v => v.percentage = v.count/roots[i].tweets);
     roots[i].retweeters = allUsers[i];
   }
   res.json(roots);
