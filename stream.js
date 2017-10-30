@@ -1,5 +1,5 @@
 var Twitter = require('twitter');
-var controller = require('./controller');
+var controller = require('./controllers/stream');
 
 var client = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -10,12 +10,14 @@ var client = new Twitter({
 
 var startStream = function () {
   controller.getAllRoots(function (roots) {
-    var stream = client.stream('statuses/filter', {follow: roots});
+    var stream = client.stream('statuses/filter', {follow: roots.join(",")});
 
     stream.on('data', function(event) {
-      if (event.retweeted_status) {
-        console.log('retweet');
+      if (event.retweeted_status && (roots.indexOf(event.retweeted_status.user.id_str) > -1)) {
         saveRetweet(event);
+      }
+      if (roots.indexOf(event.user.id_str) > -1) {
+        saveTweet(event);
       }
     });
 
@@ -33,6 +35,17 @@ var startStream = function () {
     };
 
     controller.insertRetweet(retweet, function (error) {
+      if (error) throw error;
+    });
+  }
+
+  function saveTweet(tweet) {
+    tweet = {
+      tweeter_id: tweet.user.id_str,
+      tweet_id: tweet.id_str
+    };
+
+    controller.insertTweet(tweet, function (error) {
       if (error) throw error;
     });
   }
