@@ -6,7 +6,8 @@ var userSchema = mongoose.Schema({
   belongs_to: { type: mongoose.Schema.Types.ObjectId, ref: 'Root' },
   count: { type: Number, default: 1 },
   tweet_amount: Number,
-  account_create: Date
+  account_create: Date,
+  last_fetch: Date
 });
 
 var User = mongoose.model('User', userSchema);

@@ -42,7 +42,11 @@ router.get('/', async function (req, res) {
   });
   var allUsers = await Promise.all(queries);
   for (var i = 0; i < roots.length; i++) {
-    allUsers[i].map(v => v.percentage = Math.round(v.count/roots[i].tweets*1000)/10);
+    allUsers[i].map(function (v) {
+      v.percentage = Math.round(v.count/roots[i].tweets*1000)/10;
+      var diffdays =  Math.floor(( v.last_fetch - v.account_create ) / 86400000);
+      v.tweet_rate = Math.round(v.tweet_amount/diffdays*100)/100;
+    });
     roots[i].retweeters = allUsers[i];
   }
   res.json(roots);
