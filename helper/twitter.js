@@ -12,6 +12,19 @@ var getUser = function (screen_name,  callback) {
   });
 }
 
+var bulkUsers = function (userIds) {
+  return new Promise(function(resolve, reject) {
+    client.get('users/lookup', {user_id: userIds.join(","), include_entities: false}, function(error, users, response) {
+      if (!error) {
+        resolve(users);
+      } else {
+        reject(error);
+      }
+    });
+  });
+}
+
 module.exports = {
-  getUser: getUser
+  getUser: getUser,
+  bulkUsers: bulkUsers
 }
