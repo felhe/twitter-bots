@@ -23,7 +23,7 @@ router.get('/analyse', async function (req, res) {
   merged.forEach(function(obj) {
     var date = new Date(obj.created_at);
     var now = Date.now();
-    User.update({id: obj.id_str}, {$set: {tweet_amount: obj.statuses_count, account_create: date, last_fetch: now}}, function (error) {
+    User.update({id: obj.id_str}, {$set: {tweet_amount: obj.statuses_count, account_create: date, last_fetch: now}}, {multi: true}, function (error) {
       //console.log(error);
     });
   });
