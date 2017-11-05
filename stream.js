@@ -16,7 +16,7 @@ var startStream = function () {
       if (event.retweeted_status && (roots.indexOf(event.retweeted_status.user.id_str) > -1)) {
         saveRetweet(event);
       }
-      if (roots.indexOf(event.user.id_str) > -1) {
+      if (roots.indexOf(event.user.id_str) > -1 && !event.retweeted_status) {
         saveTweet(event);
       }
     });
